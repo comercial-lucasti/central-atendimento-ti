@@ -8,7 +8,7 @@ Sem servidor, sem banco de dados e sem custo de infraestrutura.
 ![Google Apps Script](https://img.shields.io/badge/Google%20Apps%20Script-V8-2b2b2b?style=for-the-badge&logo=google&logoColor=E0B101)
 ![HTML](https://img.shields.io/badge/HTML5-2b2b2b?style=for-the-badge&logo=html5&logoColor=E0B101)
 ![JavaScript](https://img.shields.io/badge/JavaScript-2b2b2b?style=for-the-badge&logo=javascript&logoColor=E0B101)
-![Licença](https://img.shields.io/badge/Licen%C3%A7a-MIT-E0B101?style=for-the-badge&labelColor=2b2b2b)
+![Licença](https://img.shields.io/badge/Licen%C3%A7a-Todos%20os%20direitos%20reservados-E0B101?style=for-the-badge&labelColor=2b2b2b)
 
 </div>
 
@@ -116,4 +116,4 @@ Retorno: `{ sucesso: true, protocolo, emailEnviado, anexoSalvo }` ou `{ sucesso:
 
 ## Licença
 
-[MIT](LICENSE) © 2026 Lucas T.I
+Todos os direitos reservados © 2026 Lucas T.I. O código é público apenas para **visualização** (portfólio); uso, cópia, modificação ou redistribuição exigem autorização prévia e por escrito. Veja o arquivo [LICENSE](LICENSE).
