@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Central de Atendimento — Suporte de T.I</title>
+<style>
+  :root {
+    --navy: #565656;
+    --navy-2: #3f3f3f;
+    --orange: #E0B101;
+    --orange-dark: #C69C00;
+    --bg: #f7f7f7;
+    --card: #ffffff;
+    --text: #2b2b2b;
+    --muted: #6b6b6b;
+    --border: #e2e2e2;
+    --ok: #17663a;
+    --ok-bg: #e5f5ec;
+    --err: #9b1c1c;
+    --err-bg: #fdeaea;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --head: "Montserrat", "Gotham", "Avenir Next", "Century Gothic", "Segoe UI", Arial, sans-serif;
+    font-size: 16px; line-height: 1.5;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 44px 0; }
+  h2 { font-family: var(--head); font-weight: 800; font-size: 1.35rem; color: var(--navy); margin: 0 0 6px; }
+  .eyebrow { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); font-weight: 700; margin-bottom: 6px; }
+  .lead { color: var(--muted); margin: 0 0 24px; }
+
+  /* Topo / hero */
+  .topbar { background: #fff; color: var(--text); border-bottom: 3px solid var(--orange); }
+  .topbar .wrap { display: flex; justify-content: space-between; align-items: center; height: 64px; }
+  .brand { font-family: var(--head); font-weight: 800; font-size: 1.25rem; color: var(--navy); letter-spacing: -.01em; }
+  .brand span { color: var(--orange-dark); }
+  .topbar nav a { color: var(--navy); font-weight: 600; text-decoration: none; margin-left: 20px; font-size: .9rem; }
+  .topbar nav a:hover { color: var(--text); text-decoration: underline; text-decoration-color: var(--orange); text-underline-offset: 6px; }
+  .hero { background: var(--navy); color: #fff; padding: 48px 0 56px; }
+  .hero h1 { font-family: var(--head); font-weight: 800; font-size: clamp(1.7rem, 4.5vw, 2.5rem); line-height: 1.15; margin: 0 0 8px; }
+  .hero h1 em { font-style: normal; color: var(--orange); }
+  .hero .sub { font-size: 1.05rem; color: #e6e6e6; max-width: 620px; margin: 0 0 26px; }
+  .btn {
+    display: inline-block; border: 0; cursor: pointer; text-decoration: none;
+    background: var(--orange); color: #2b2b2b; font: 800 1rem/1 inherit; font-family: inherit;
+    padding: 14px 24px; border-radius: 6px;
+  }
+  .btn:hover { background: var(--orange-dark); }
+  .btn:disabled { background: #cfcfcf; cursor: not-allowed; }
+  .btn.secondary { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
+  .btn.secondary:hover { background: var(--navy); color: #fff; }
+
+  /* Princípios */
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .box { background: var(--card); border: 1px solid var(--border); border-top: 3px solid var(--navy); border-radius: 6px; padding: 20px; }
+  .box h3 { margin: 0 0 6px; font-size: 1.05rem; color: var(--navy); }
+  .box p { margin: 0; color: var(--muted); font-size: .95rem; }
+
+  /* Horários */
+  .horarios { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 14px; }
+  .hora { background: var(--navy); color: #fff; border-radius: 6px; padding: 20px; }
+  .hora small { color: var(--orange); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: .75rem; }
+  .hora strong { display: block; font-size: 1.6rem; margin-top: 4px; }
+  .note { font-size: .92rem; color: var(--muted); border-left: 3px solid var(--orange); padding-left: 12px; }
+
+  /* Como funciona */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .step { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 20px; }
+  .step .n { font-family: var(--head); font-size: 1.8rem; font-weight: 800; color: var(--orange-dark); line-height: 1; }
+  .step h3 { margin: 8px 0 4px; font-size: 1rem; color: var(--navy); }
+  .step p { margin: 0; font-size: .92rem; color: var(--muted); }
+
+  /* Formulário */
+  .panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 28px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+  .fg { margin-bottom: 16px; }
+  label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 5px; color: var(--navy); }
+  input, select, textarea {
+    width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 6px;
+    font: inherit; font-size: .95rem; background: #fff; color: var(--text);
+  }
+  input:focus, select:focus, textarea:focus, .btn:focus-visible { outline: 2px solid var(--orange); outline-offset: 1px; border-color: var(--orange); }
+  input.invalid, select.invalid, textarea.invalid { border-color: var(--err); background: var(--err-bg); }
+  .hint { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+  .fieldmsg { font-size: .8rem; color: var(--err); margin-top: 4px; display: none; }
+  fieldset[disabled] { opacity: .65; }
+  fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+  #btnSubmit { width: 100%; }
+  .btn.secondary:hover { color: #fff; }
+  .alert { margin-top: 16px; padding: 14px 16px; border-radius: 6px; display: none; font-weight: 600; }
+  .alert.err { display: block; background: var(--err-bg); color: var(--err); border: 1px solid #f0bcbc; }
+  .alert.info { display: block; background: #eaf1f9; color: var(--navy); border: 1px solid #c8d8ea; }
+
+  /* Confirmação */
+  #confirmacao { display: none; }
+  .confirm { background: var(--ok-bg); border: 1px solid #b7e0c6; border-left: 5px solid var(--ok); border-radius: 6px; padding: 22px; }
+  .confirm .tag { font-size: .78rem; letter-spacing: .12em; font-weight: 800; color: var(--ok); }
+  .confirm .proto { font-size: 2rem; font-weight: 800; color: var(--navy); margin: 4px 0; }
+  .confirm p { margin: 4px 0; }
+
+  /* Jogo */
+  #jogo { display: none; margin-top: 20px; }
+  .gamebox { background: var(--navy); border-radius: 8px; padding: 18px; color: #fff; }
+  .gamehead { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .gamehead strong { font-size: 1rem; }
+  .gamehead span { font-size: .85rem; color: #e6e6e6; font-variant-numeric: tabular-nums; }
+  #tela { display: block; width: 100%; height: auto; background: #eaf0f6; border-radius: 6px; touch-action: manipulation; cursor: pointer; }
+  .gameover { text-align: center; margin-top: 12px; display: none; }
+  .gameover p { margin: 0 0 10px; font-weight: 600; }
+  .gameover .btn.secondary { color: #fff; border-color: #e6e6e6; }
+  .gameover .btn.secondary:hover { background: #fff; color: var(--navy); }
+  .gamefoot { margin-top: 10px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; font-size: .82rem; color: #e6e6e6; }
+  .gamefoot .btn { padding: 9px 16px; font-size: .88rem; }
+
+  /* Regras / rodapé */
+  .rules { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 8px 22px; }
+  .rules li { padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .rules li:last-child { border-bottom: 0; }
+  .rules ul { list-style: none; margin: 0; padding: 0; }
+  footer { background: var(--navy-2); color: #e6e6e6; padding: 22px 0; font-size: .9rem; }
+  footer strong { color: #fff; }
+
+  @media (max-width: 720px) {
+    .grid3, .steps, .horarios, .row2 { grid-template-columns: 1fr; }
+    .topbar nav { display: none; }
+    .panel { padding: 18px; }
+    section { padding: 32px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand"><span>Central</span> de T.I</div>
+    <nav>
+      <a href="#principios">Princípios</a>
+      <a href="#horarios">Horários</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#abrir-chamado">Abrir chamado</a>
+      <a href="#regras">Regras</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Central Oficial de Atendimento</div>
+    <h1>Suporte de T.I <em>com propósito</em></h1>
+    <p class="sub">Atendimento técnico estruturado, rastreável e justo — para que a operação nunca pare.</p>
+    <a class="btn" href="#abrir-chamado">Abrir chamado</a>
+  </div>
+</div>
+
+<section id="principios">
+  <div class="wrap">
+    <h2>Princípios</h2>
+    <p class="lead">Como o atendimento de T.I funciona na empresa.</p>
+    <div class="grid3">
+      <div class="box"><h3>Canal Único</h3><p>Todas as ocorrências em um só lugar. Sem chats ou abordagens informais.</p></div>
+      <div class="box"><h3>Histórico e Monitoramento</h3><p>Cada chamado gera um protocolo monitorado pela Diretoria via e-mail.</p></div>
+      <div class="box"><h3>Atendimento Justo</h3><p>Priorização técnica baseada no impacto e urgência real da operação.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="horarios" style="padding-top:0">
+  <div class="wrap">
+    <h2>Horários de atendimento</h2>
+    <p class="lead">Janelas fixas de atendimento técnico.</p>
+    <div class="horarios">
+      <div class="hora"><small>Manhã</small><strong>08:00 – 09:30</strong></div>
+      <div class="hora"><small>Tarde</small><strong>14:00 – 15:00</strong></div>
+    </div>
+    <p class="note">Chamados abertos após os horários de corte ficam para a próxima rotina de atendimento.</p>
+  </div>
+</section>
+
+<section id="como-funciona" style="padding-top:0">
+  <div class="wrap">
+    <h2>Como funciona</h2>
+    <p class="lead">Três etapas, do pedido à solução.</p>
+    <div class="steps">
+      <div class="step"><div class="n">01</div><h3>Abertura do Chamado</h3><p>Preencha o formulário abaixo com o máximo de detalhes e, se possível, anexe um print.</p></div>
+      <div class="step"><div class="n">02</div><h3>Recebimento do Protocolo</h3><p>Você recebe o número do protocolo na tela e a confirmação por e-mail.</p></div>
+      <div class="step"><div class="n">03</div><h3>Tratativa e Resolução</h3><p>A T.I atende conforme impacto e urgência, na próxima janela de atendimento.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="abrir-chamado" style="padding-top:0">
+  <div class="wrap">
+    <h2>Abrir chamado</h2>
+    <p class="lead">Todos os campos são obrigatórios, exceto o anexo.</p>
+
+    <div class="panel">
+      <form id="tiForm" novalidate>
+        <fieldset id="campos">
+          <div class="row2">
+            <div class="fg">
+              <label for="email">E-mail Corporativo *</label>
+              <input type="email" id="email" required placeholder="seuemail@empresa.com.br" autocomplete="email">
+              <div class="fieldmsg" data-for="email"></div>
+            </div>
+            <div class="fg">
+              <label for="nome">Nome Completo *</label>
+              <input type="text" id="nome" required placeholder="Digite seu nome completo" autocomplete="name">
+              <div class="fieldmsg" data-for="nome"></div>
+            </div>
+          </div>
+
+          <div class="row2">
+            <div class="fg">
+              <label for="setor">Setor / Departamento *</label>
+              <select id="setor" required>
+                <option value="">Selecione...</option>
+                <option value="Administrativo">Administrativo</option>
+                <option value="Comercial">Comercial</option>
+                <option value="Compras">Compras</option>
+                <option value="Financeiro">Financeiro</option>
+                <option value="Logística">Logística</option>
+                <option value="Produção">Produção</option>
+                <option value="Atendimento">Atendimento</option>
+                <option value="Outro">Outro</option>
+              </select>
+              <div class="fieldmsg" data-for="setor"></div>
+            </div>
+            <div class="fg">
+              <label for="tipoOcorrencia">Tipo de Ocorrência *</label>
+              <select id="tipoOcorrencia" required>
+                <option value="">Selecione...</option>
+                <option value="Sistema">Sistema</option>
+                <option value="Computador / Notebook">Computador / Notebook</option>
+                <option value="Internet / Rede">Internet / Rede</option>
+                <option value="Acesso / Login">Acesso / Login</option>
+                <option value="Impressora">Impressora</option>
+                <option value="Equipamento">Equipamento (Monitor, Teclado, Mouse, etc.)</option>
+                <option value="Outro">Outro</option>
+              </select>
+              <div class="fieldmsg" data-for="tipoOcorrencia"></div>
+            </div>
+          </div>
+
+          <div class="fg">
+            <label for="categoria">Categoria do Problema *</label>
+            <select id="categoria" required>
+              <option value="">Selecione...</option>
+              <option value="Erro (Aparece mensagem de falha)">Erro (Aparece mensagem de falha)</option>
+              <option value="Lentidão">Lentidão</option>
+              <option value="Falha Total">Falha Total (Não funciona de jeito nenhum)</option>
+              <option value="Solicitação">Solicitação (Instalação, permissão, etc.)</option>
+              <option value="Dúvida">Dúvida</option>
+            </select>
+            <div class="fieldmsg" data-for="categoria"></div>
+          </div>
+
+          <div class="row2">
+            <div class="fg">
+              <label for="impacto">Impacto no Meu Trabalho *</label>
+              <select id="impacto" required>
+                <option value="">Selecione...</option>
+                <option value="Não impede o trabalho">Não impede o trabalho (Posso continuar minhas tarefas)</option>
+                <option value="Impede parcialmente">Impede parcialmente (Atrasando ou dificultando)</option>
+                <option value="Impede totalmente">Impede totalmente (Não consigo prosseguir)</option>
+              </select>
+              <div class="fieldmsg" data-for="impacto"></div>
+            </div>
+            <div class="fg">
+              <label for="urgencia">Nível de Urgência *</label>
+              <select id="urgencia" required>
+                <option value="">Selecione...</option>
+                <option value="Baixa">Baixa – Não impacta a operação</option>
+                <option value="Média">Média – Impacta, mas há alternativa</option>
+                <option value="Alta">Alta – Operação parada (Atenção imediata)</option>
+              </select>
+              <div class="fieldmsg" data-for="urgencia"></div>
+            </div>
+          </div>
+
+          <div class="fg">
+            <label for="descricao">Descrição do Problema *</label>
+            <textarea id="descricao" rows="5" required placeholder="Informe o que aconteceu, quando começou e se aparece alguma mensagem de erro."></textarea>
+            <div class="fieldmsg" data-for="descricao"></div>
+          </div>
+
+          <div class="fg">
+            <label for="arquivo">Anexar Print ou Arquivo (opcional)</label>
+            <input type="file" id="arquivo" accept="image/png,image/jpeg,.png,.jpg,.jpeg,.pdf,.doc,.docx">
+            <div class="hint">PNG, JPG, PDF, DOC ou DOCX — até 5 MB.</div>
+            <div class="fieldmsg" data-for="arquivo"></div>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="btn" id="btnSubmit">Abrir Chamado de Suporte</button>
+        <div id="feedback" class="alert" role="alert" aria-live="polite"></div>
+      </form>
+
+      <div id="confirmacao" aria-live="polite"></div>
+      <div id="jogo">
+        <div class="gamebox">
+          <div class="gamehead">
+            <strong>Enquanto isso: Lucas, Técnico de T.I</strong>
+            <span>Pontos <b id="pts">0</b> · Recorde <b id="rec">0</b></span>
+          </div>
+          <canvas id="tela" width="720" height="220" aria-label="Minijogo do Lucas, técnico de T.I"></canvas>
+          <div class="gameover" id="fim">
+            <p>Chamado encerrado! Lucas precisa de você novamente.</p>
+            <button type="button" class="btn" id="btnAgain">Jogar novamente</button>
+            <button type="button" class="btn secondary" id="btnVoltar">Voltar para a Central</button>
+          </div>
+          <div class="gamefoot">
+            <span id="dica">Pressione ESPAÇO ou toque no jogo para começar e pular.</span>
+            <button type="button" class="btn secondary" id="btnVoltar2" style="color:#fff;border-color:#e6e6e6">Voltar para a Central</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="regras" style="padding-top:0">
+  <div class="wrap">
+    <h2>Regras</h2>
+    <p class="lead">Para manter o atendimento justo para todos.</p>
+    <div class="rules">
+      <ul>
+        <li>Alta prioridade somente quando o trabalho estiver totalmente impedido.</li>
+        <li>Chamados fora da janela devem seguir a regra definida pela gestão.</li>
+        <li>Chamados incompletos devem ser corrigidos antes do atendimento.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Central Oficial de Atendimento de T.I</div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Navegação suave por âncoras ---------- */
+  document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      var alvo = document.querySelector(this.getAttribute('href'));
+      if (alvo) alvo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* ---------- Formulário ---------- */
+  var MAX_BYTES = 5 * 1024 * 1024; // 5 MB (Base64 vira ~6,7 MB no envio)
+  var MIME_POR_EXT = {
+    png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', pdf: 'application/pdf',
+    doc: 'application/msword',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  };
+  var IDS = ['email', 'nome', 'setor', 'tipoOcorrencia', 'categoria', 'impacto', 'urgencia', 'descricao'];
+  var enviando = false; // trava contra clique duplo / Enter duplo
+
+  var form = document.getElementById('tiForm');
+  var btn = document.getElementById('btnSubmit');
+  var feedback = document.getElementById('feedback');
+  var campos = document.getElementById('campos');
+  var fileInput = document.getElementById('arquivo');
+
+  function el(id) { return document.getElementById(id); }
+  function msgCampo(id, texto) {
+    var m = document.querySelector('.fieldmsg[data-for="' + id + '"]');
+    var c = el(id);
+    if (m) { m.textContent = texto || ''; m.style.display = texto ? 'block' : 'none'; }
+    if (c) c.classList.toggle('invalid', !!texto);
+  }
+  function mostrarFeedback(tipo, texto) {
+    feedback.className = 'alert ' + tipo;
+    feedback.textContent = texto;
+  }
+  function limparFeedback() { feedback.className = 'alert'; feedback.textContent = ''; }
+
+  function extensao(nome) { var p = String(nome).split('.'); return p.length > 1 ? p.pop().toLowerCase() : ''; }
+
+  function validarArquivo() {
+    msgCampo('arquivo', '');
+    if (!fileInput.files.length) return true;
+    var f = fileInput.files[0];
+    if (!MIME_POR_EXT[extensao(f.name)]) { msgCampo('arquivo', 'Formato não permitido. Use PNG, JPG, PDF, DOC ou DOCX.'); return false; }
+    if (f.size > MAX_BYTES) { msgCampo('arquivo', 'Arquivo muito grande (' + (f.size / 1048576).toFixed(1) + ' MB). O limite é 5 MB.'); return false; }
+    if (f.size === 0) { msgCampo('arquivo', 'O arquivo está vazio.'); return false; }
+    return true;
+  }
+
+  function validar() {
+    var ok = true, primeiro = null;
+    IDS.forEach(function (id) {
+      var v = el(id).value.trim();
+      var erro = '';
+      if (!v) erro = 'Campo obrigatório.';
+      else if (id === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) erro = 'Informe um e-mail válido.';
+      else if (id === 'descricao' && v.length < 10) erro = 'Descreva o problema com um pouco mais de detalhe.';
+      msgCampo(id, erro);
+      if (erro) { ok = false; if (!primeiro) primeiro = el(id); }
+    });
+    if (!validarArquivo()) { ok = false; if (!primeiro) primeiro = fileInput; }
+    if (primeiro) primeiro.focus();
+    return ok;
+  }
+
+  IDS.forEach(function (id) { el(id).addEventListener('input', function () { msgCampo(id, ''); }); });
+  fileInput.addEventListener('change', validarArquivo);
+
+  function travar(sim) {
+    enviando = sim;
+    btn.disabled = sim;
+    campos.disabled = sim;
+    btn.textContent = sim ? 'Enviando chamado… aguarde' : 'Abrir Chamado de Suporte';
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (enviando) return;            // duplo clique / Enter
+    limparFeedback();
+    if (!validar()) return;
+    travar(true);                    // trava ANTES de ler o arquivo
+
+    var dados = {
+      email: el('email').value.trim(),
+      nome: el('nome').value.trim(),
+      setor: el('setor').value,
+      tipoOcorrencia: el('tipoOcorrencia').value,
+      categoria: el('categoria').value,
+      impacto: el('impacto').value,
+      urgencia: el('urgencia').value,
+      descricao: el('descricao').value.trim(),
+      arquivo: null
+    };
+
+    if (fileInput.files.length > 0) {
+      var file = fileInput.files[0];
+      var reader = new FileReader();
+      reader.onload = function (evt) {
+        var partes = String(evt.target.result).split(',');
+        dados.arquivo = {
+          bytes: partes[1] || '',
+          mimeType: file.type || MIME_POR_EXT[extensao(file.name)],
+          nome: file.name
+        };
+        dispararEnvio(dados);
+      };
+      reader.onerror = function () {
+        travar(false);
+        mostrarFeedback('err', 'Não foi possível ler o arquivo anexado. Escolha o arquivo novamente ou envie sem anexo.');
+      };
+      reader.readAsDataURL(file);
+    } else {
+      dispararEnvio(dados);
+    }
+  });
+
+  function dispararEnvio(dados) {
+    if (typeof google === 'undefined' || !google.script || !google.script.run) {
+      travar(false);
+      mostrarFeedback('err', 'Esta página precisa ser aberta pelo endereço oficial da Central (Apps Script). O chamado NÃO foi enviado.');
+      return;
+    }
+    var respondeu = false;
+    var vigia = setTimeout(function () {
+      if (respondeu) return;
+      respondeu = true; travar(false);
+      mostrarFeedback('err', 'O servidor demorou para responder. ANTES de reenviar, confira seu e-mail: se o protocolo chegou, o chamado já foi registrado. Seus dados foram mantidos.');
+    }, 90000);
+    google.script.run
+      .withSuccessHandler(function (res) {
+        if (respondeu) return; respondeu = true; clearTimeout(vigia);
+        if (res && res.sucesso === true) {
+          sucesso(res, dados);
+        } else {
+          travar(false);
+          mostrarFeedback('err', 'Não foi possível registrar o chamado: ' + ((res && res.erro) || 'resposta inesperada do servidor.') + ' Seus dados foram mantidos — tente novamente.');
+        }
+      })
+      .withFailureHandler(function (err) {
+        if (respondeu) return; respondeu = true; clearTimeout(vigia);
+        travar(false);
+        var det = err && err.message ? ' (' + err.message + ')' : '';
+        mostrarFeedback('err', 'Ocorreu um erro no servidor e o chamado NÃO foi confirmado' + det + '. Seus dados foram mantidos — tente novamente.');
+      })
+      .processarChamado(dados);
+  }
+
+  function sucesso(res, dados) {
+    var proto = String(res.protocolo == null ? '' : res.protocolo);
+    if (proto && proto.charAt(0) !== '#') proto = '#' + proto;
+    var box = el('confirmacao');
+    box.textContent = '';
+    var c = document.createElement('div'); c.className = 'confirm';
+    function add(tag, cls, txt) { var n = document.createElement(tag); if (cls) n.className = cls; n.textContent = txt; c.appendChild(n); }
+    add('div', 'tag', 'CHAMADO REGISTRADO');
+    add('div', 'proto', 'Protocolo: ' + (proto || '(indisponível)'));
+    add('p', '', 'Seu chamado foi registrado e encaminhado para o atendimento de T.I.');
+    if (res.emailEnviado !== false) add('p', '', 'Uma confirmação foi enviada por e-mail para ' + dados.email + '.');
+    else add('p', '', 'Não foi possível enviar o e-mail de confirmação. Guarde o número do protocolo.');
+    if (dados.arquivo && res.anexoSalvo === false) add('p', '', 'Atenção: o anexo não pôde ser salvo. Informe a T.I citando o protocolo.');
+    box.appendChild(c);
+    box.style.display = 'block';
+
+    form.style.display = 'none';
+    form.reset();          // só limpa após sucesso confirmado
+    limparFeedback();
+    travar(false);
+    abrirJogo();
+  }
+
+  /* ---------- Minijogo: Lucas, Técnico de T.I ---------- */
+  var cv = el('tela'), ctx = cv.getContext('2d');
+  var W = cv.width, H = cv.height, CHAO = 180;
+  var estado = 'oculto';           // oculto | pronto | correndo | fim
+  var gameRunning = false;
+  var lucas, obst, vel, pontos, recorde = 0, frame, ultimo, prox, raf = null;
+
+  try { recorde = parseInt(localStorage.getItem('lucasRecorde'), 10) || 0; } catch (e) {}
+  el('rec').textContent = recorde;
+
+  function resetar() {
+    lucas = { x: 60, y: CHAO, w: 34, h: 58, vy: 0, noChao: true };
+    obst = []; vel = 300; pontos = 0; frame = 0; prox = 0.9;
+    el('pts').textContent = '0';
+  }
+
+  function abrirJogo() {
+    el('jogo').style.display = 'block';
+    el('fim').style.display = 'none';
+    resetar();
+    estado = 'pronto'; gameRunning = false;
+    desenhar();
+    el('dica').textContent = 'Pressione ESPAÇO ou toque no jogo para começar e pular.';
+    el('jogo').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function iniciar() {
+    resetar();
+    el('fim').style.display = 'none';
+    estado = 'correndo'; gameRunning = true;
+    el('dica').textContent = 'ESPAÇO ou toque para pular.';
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    ultimo = performance.now();
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(loop);
+  }
+
+  function pular() {
+    if (estado === 'pronto') { iniciar(); pular(); return; }
+    if (estado === 'correndo' && lucas.noChao) { lucas.vy = -640; lucas.noChao = false; }
+  }
+
+  function fimDeJogo() {
+    estado = 'fim'; gameRunning = false;
+    var p = Math.floor(pontos);
+    if (p > recorde) { recorde = p; el('rec').textContent = p; try { localStorage.setItem('lucasRecorde', String(p)); } catch (e) {} }
+    desenhar();
+    el('fim').style.display = 'block';
+    el('btnAgain').focus({ preventScroll: true });
+  }
+
+  function loop(t) {
+    if (estado !== 'correndo') return;
+    var dt = Math.min((t - ultimo) / 1000, 0.05); ultimo = t; frame++;
+    // física
+    lucas.vy += 1900 * dt; lucas.y += lucas.vy * dt;
+    if (lucas.y >= CHAO) { lucas.y = CHAO; lucas.vy = 0; lucas.noChao = true; }
+    // obstáculos
+    prox -= dt;
+    if (prox <= 0) {
+      var tipos = [
+        { k: 'rack', w: 34, h: 56 },
+        { k: 'cabo', w: 46, h: 24 },
+        { k: 'pc', w: 40, h: 40 },
+        { k: 'rack2', w: 60, h: 56 }
+      ];
+      var o = tipos[Math.floor(Math.random() * tipos.length)];
+      obst.push({ k: o.k, w: o.w, h: o.h, x: W + 10 });
+      prox = (0.75 + Math.random() * 0.9) * (300 / vel) + 0.35;
+    }
+    obst.forEach(function (o) { o.x -= vel * dt; });
+    obst = obst.filter(function (o) { return o.x + o.w > -10; });
+    vel = Math.min(620, vel + 6 * dt);
+    pontos += dt * 12 * (vel / 300);
+    el('pts').textContent = Math.floor(pontos);
+    // colisão (hitbox levemente reduzida)
+    var lx = lucas.x + 6, ly = lucas.y - lucas.h + 4, lw = lucas.w - 12, lh = lucas.h - 8;
+    for (var i = 0; i < obst.length; i++) {
+      var o = obst[i], ox = o.x + 4, oy = CHAO - o.h + 4, ow = o.w - 8, oh = o.h - 4;
+      if (lx < ox + ow && lx + lw > ox && ly < oy + oh && ly + lh > oy) { fimDeJogo(); return; }
+    }
+    desenhar();
+    raf = requestAnimationFrame(loop);
+  }
+
+  function rect(x, y, w, h, c) { ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), w, h); }
+
+  function desenharLucas() {
+    var x = lucas.x, base = lucas.y, passo = (estado === 'correndo' && lucas.noChao) ? Math.floor(frame / 5) % 2 : 0;
+    var top = base - lucas.h;
+    // pernas (calça azul-marinho) e tênis
+    var l1 = passo ? 6 : 0, l2 = passo ? 0 : 6;
+    if (!lucas.noChao) { l1 = 4; l2 = -2; }
+    rect(x + 8, top + 38, 8, 14 - l1 / 2, '#3f3f3f'); rect(x + 6, base - 6 - l1 / 2, 12, 6, '#222');
+    rect(x + 19, top + 38, 8, 14 - l2 / 2, '#3f3f3f'); rect(x + 18, base - 6 - l2 / 2, 12, 6, '#222');
+    // tronco: polo azul-marinho com faixa laranja
+    rect(x + 5, top + 20, 26, 20, '#565656');
+    rect(x + 5, top + 32, 26, 3, '#E0B101');
+    // crachá
+    rect(x + 8, top + 23, 8, 10, '#fff'); rect(x + 8, top + 23, 8, 3, '#E0B101');
+    rect(x + 11, top + 20, 2, 3, '#888');
+    // notebook debaixo do braço
+    rect(x + 22, top + 26, 16, 10, '#bdbdbd'); rect(x + 24, top + 28, 12, 6, '#3f3f3f'); rect(x + 26, top + 30, 3, 2, '#E0B101');
+    // braço
+    rect(x + 27, top + 22, 6, 12, '#f0c39b');
+    // cabeça
+    rect(x + 9, top + 2, 20, 18, '#f0c39b');
+    // cabelo
+    rect(x + 8, top, 22, 7, '#3a2a1e'); rect(x + 8, top + 5, 3, 6, '#3a2a1e');
+    // óculos
+    rect(x + 16, top + 9, 8, 6, '#222'); rect(x + 17, top + 10, 6, 4, '#dff1ff');
+    rect(x + 26, top + 9, 4, 2, '#222');
+    rect(x + 24, top + 11, 2, 1, '#222');
+    // sorriso
+    rect(x + 21, top + 16, 5, 1, '#8a4b2b');
+  }
+
+  function desenharObst(o) {
+    var y = CHAO - o.h, x = o.x;
+    if (o.k === 'rack' || o.k === 'rack2') {
+      rect(x, y, o.w, o.h, '#4a4a4a');
+      for (var r = 0; r < 4; r++) {
+        rect(x + 3, y + 5 + r * 13, o.w - 6, 8, '#666');
+        rect(x + 6, y + 8 + r * 13, 3, 2, r % 2 ? '#E0B101' : '#8bc34a');
+      }
+      if (o.k === 'rack2') { rect(x + o.w / 2, y, 2, o.h, '#2b2b2b'); }
+    } else if (o.k === 'cabo') {
+      ctx.strokeStyle = '#E0B101'; ctx.lineWidth = 5; ctx.beginPath();
+      ctx.moveTo(x, CHAO - 3);
+      ctx.bezierCurveTo(x + 8, CHAO - 30, x + 18, CHAO + 8, x + 28, CHAO - 16);
+      ctx.bezierCurveTo(x + 34, CHAO - 28, x + 40, CHAO - 4, x + o.w, CHAO - 3); ctx.stroke();
+      ctx.strokeStyle = '#565656'; ctx.lineWidth = 4; ctx.beginPath();
+      ctx.moveTo(x + 4, CHAO - 2); ctx.bezierCurveTo(x + 14, CHAO - 22, x + 26, CHAO - 2, x + o.w - 2, CHAO - 14); ctx.stroke();
+    } else { // pc com erro
+      rect(x, y, o.w, 28, '#2b2b2b'); rect(x + 3, y + 3, o.w - 6, 22, '#1e64c8');
+      rect(x + 15, y + 8, 10, 2, '#fff'); rect(x + 15, y + 12, 10, 2, '#fff'); rect(x + 15, y + 16, 6, 2, '#fff');
+      rect(x + 17, y + 28, 6, 6, '#555'); rect(x + 10, y + 34, 20, 6, '#555');
+    }
+  }
+
+  function desenhar() {
+    ctx.clearRect(0, 0, W, H);
+    rect(0, 0, W, H, '#efefef');
+    // janelas ao fundo (parede de escritório)
+    for (var i = 0; i < 6; i++) { rect(30 + i * 120 - ((frame * 0.3) % 120 | 0) * 0, 30, 70, 46, '#e2e2e2'); }
+    rect(0, CHAO, W, H - CHAO, '#d4d4d4'); rect(0, CHAO, W, 3, '#3f3f3f');
+    // faixas do piso em movimento
+    var off = estado === 'correndo' ? (frame * vel / 60) % 40 : 0;
+    for (var x = -off; x < W; x += 40) rect(x, CHAO + 14, 20, 3, '#b8b8b8');
+    obst.forEach(desenharObst);
+    desenharLucas();
+    if (estado === 'pronto') {
+      ctx.fillStyle = 'rgba(63,63,63,.9)'; ctx.font = '600 18px Segoe UI, Arial'; ctx.textAlign = 'center';
+      ctx.fillText('Toque ou pressione ESPAÇO para começar', W / 2, 90);
+      ctx.textAlign = 'left';
+    }
+    if (estado === 'fim') {
+      ctx.fillStyle = 'rgba(63,63,63,.9)'; ctx.font = '700 20px Segoe UI, Arial'; ctx.textAlign = 'center';
+      ctx.fillText('Chamado encerrado!', W / 2, 80);
+      ctx.textAlign = 'left';
+    }
+  }
+
+  // Espaço: só é interceptado com o jogo ativo/pronto E fora de campos de digitação
+  document.addEventListener('keydown', function (e) {
+    if (e.code !== 'Space' && e.key !== ' ') return;
+    var t = e.target, tag = t && t.tagName;
+    var emCampo = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable);
+    if (emCampo) return;
+    if (gameRunning) { e.preventDefault(); pular(); }
+    else if (estado === 'pronto' && el('jogo').style.display === 'block' && tag !== 'BUTTON') { e.preventDefault(); pular(); }
+  });
+
+  function toque(e) { if (estado === 'pronto' || estado === 'correndo') { e.preventDefault(); pular(); } }
+  cv.addEventListener('mousedown', toque);
+  cv.addEventListener('touchstart', toque, { passive: false });
+
+  el('btnAgain').addEventListener('click', iniciar);
+
+  function voltar() {
+    gameRunning = false; estado = 'oculto'; cancelAnimationFrame(raf);
+    el('jogo').style.display = 'none';
+    el('confirmacao').style.display = 'none';
+    el('confirmacao').textContent = '';
+    form.style.display = '';
+    el('abrir-chamado').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  el('btnVoltar').addEventListener('click', voltar);
+  el('btnVoltar2').addEventListener('click', voltar);
+})();
+</script>
+</body>
+</html>
